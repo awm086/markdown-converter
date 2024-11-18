@@ -2,15 +2,13 @@
 
 namespace App;
 
+use App\Tokenizer;
 class MarkdownConverter
 {
     private $parser;
-    private $renderer;
-
     public function __construct()
     {
         $this->parser = new MarkdownParser();
-        $this->renderer = new HtmlRenderer();
     }
 
     public function convertFile($composerEvent): void
@@ -29,16 +27,17 @@ class MarkdownConverter
 
         $content = file_get_contents($filePath);
         $html = $this->convertToHtml($content);
-        
+
         $outputPath = pathinfo($filePath, PATHINFO_DIRNAME) . '/' . pathinfo($filePath, PATHINFO_FILENAME) . '.html';
         file_put_contents($outputPath, $html);
-        
+
         echo "Conversion complete. Output file: $outputPath\n";
     }
 
     public function convertToHtml(string $markdown): string
     {
-        $ast = $this->parser->parse($markdown);
-        return $this->renderer->render($ast);
+        // get the lines 
+        $html = $this->parser->parse($markdown);
+        return $html;
     }
 }
