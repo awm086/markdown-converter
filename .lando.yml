@@ -1,0 +1,11 @@
+name: markdown-converter
+recipe: lamp
+config:
+  webroot: .
+  xdebug: true
+services:
+  database: disabled  
+  appserver:
+    overrides:
+      environment:
+        XDEBUG_MODE: 'debug,develop'
