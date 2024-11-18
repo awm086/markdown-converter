@@ -10,21 +10,24 @@ namespace App;
  */
 class MarkdownParser
 {
+
     /**
      * Parse the given Markdown text and convert it to HTML
      *
      * @param string $markdown The input Markdown text
      * @return string The resulting HTML
      */
-    public function parse(string $markdown): string {
-        $lines = explode("\n", $markdown);
+    public function parse(string $markdown): string
+    {
+        // Normalize all line endings 
+        $nomalizedText = str_replace(["\r\n", "\r"], "\n", $markdown);
+        $lines = explode("\n", $nomalizedText);
+        //  ignore empty line 
+        $lines = array_filter(array_map(fn($s) => trim($s), $lines));
+
         $html = '';
 
         foreach ($lines as $line) {
-            $line = trim($line);
-            if (empty($line)) {
-                continue; // Skip empty lines
-            }
 
             // Check if the line is a header
             if (preg_match('/^(#{1,6})\s+(.+)$/', $line, $matches)) {
@@ -32,7 +35,7 @@ class MarkdownParser
                 $content = $this->parseInline($matches[2]);
                 $html .= "<h{$level}>{$content}</h{$level}>\n";
             } else {
-                // If not a header, treat as a paragraph
+                // If not a header, treat as a text
                 $content = $this->parseInline($line);
                 $html .= "<p>{$content}</p>\n";
             }
@@ -42,22 +45,27 @@ class MarkdownParser
     }
 
     /**
-     * Parse inline Markdown elements (currently only links)
+     * Parse inline links
      *
      * @param string $text The text to parse for inline elements
      * @return string The text with inline elements converted to HTML
      */
-    private function parseInline(string $text): string {
-        // Parse links
-        $text = preg_replace_callback(
-            '/\[([^\]]+)\]\(([^\)]+)\)/',
-            function ($matches) {
-                $linkText = $this->parseInline($matches[1]); // Allow nested parsing
-                return "<a href=\"{$matches[2]}\">{$linkText}</a>";
-            },
-            $text
-        );
+    private function parseInline(string $text): string
+    {
 
-        return $text;
+        $html = $text;
+        if (strpos($text, '](') !== FALSE && preg_match_all('/\[([^\]]+)\]\(([^\)]+)\)/', $text, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                $raw = $match[0];
+                $linkText = $match[1];
+                $url = $match[2];
+                $element = '<a href="' . $url . '">' . $linkText . '</a>';
+                // @todo, can we use substitution?
+                $html = str_replace($raw, $element, $html);
+            }
+        }
+
+        return $html;
     }
+
 }
