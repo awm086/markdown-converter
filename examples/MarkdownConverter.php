@@ -1,14 +1,15 @@
 <?php
 
-namespace App;
+namespace Acme\TextTools\Markdown\Examples;
 
-use App\Tokenizer;
+use Acme\TextTools\Markdown\HtmlDocumentRenderer;
+use Acme\TextTools\Markdown\MarkdownDocumentParser;
 class MarkdownConverter
 {
     private $parser;
     public function __construct()
     {
-        $this->parser = new MarkdownParser();
+        $this->parser = new MarkdownDocumentParser();
     }
 
     static function convertFile($composerEvent): void
@@ -26,7 +27,7 @@ class MarkdownConverter
         }
 
         $content = file_get_contents($filePath);
-         $converter = new MarkdownConverter();
+        $converter = new MarkdownConverter();
         $html = $converter->convertToHtml($content);
 
         $outputPath = pathinfo($filePath, PATHINFO_DIRNAME) . '/' . pathinfo($filePath, PATHINFO_FILENAME) . '.html';
@@ -38,7 +39,9 @@ class MarkdownConverter
     public function convertToHtml(string $markdown): string
     {
         // get the lines 
-        $html = $this->parser->parse($markdown);
+        $doc =  $this->parser->parse($markdown);
+        $renderer = new HtmlDocumentRenderer();
+        $html = $renderer->render($doc);
         return $html;
     }
 }

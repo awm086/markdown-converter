@@ -1,6 +1,6 @@
 <?php
-require_once 'vendor/autoload.php';
-use App\MarkdownConverter;
+require_once '../vendor/autoload.php';
+use Acme\TextTools\Markdown\Examples\MarkdownConverter;
 
 $converter = new MarkdownConverter();
 $convertedHtml = '';

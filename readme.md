@@ -1,4 +1,30 @@
-# Markdown Converter
+# Mini Markdown Parser and Converter
+
+A PHP library that parses Markdown into an Abstract Syntax Tree (AST) structure and renders it to HTML.
+
+## Features
+
+- Parses Markdown into a structured AST representation
+- Renders AST to HTML output
+- Supports headers (h1-h6), paragraphs, and links
+- Clean separation between parsing and rendering
+- Provides a command line tool.
+
+## Basic Usage
+
+```php
+use Acme\TextTools\Markdown\MarkdownDocumentParser;
+use Acme\TextTools\Markdown\HtmlDocumentRenderer;
+
+$parser = new MarkdownDocumentParser();
+$renderer = new HtmlDocumentRenderer();
+
+// Parse markdown into AST
+$doc = $parser->parse($markdown);
+
+// Render AST to HTML
+$html = $renderer->render($doc);
+```
 
 ## Setup and Installation
 
@@ -32,25 +58,62 @@
    lando start
    ```
 
-## Running Tests
+## Testing
 
-### Using Composer
-Run the following command:
-```
+The project includes comprehensive unit tests for both parsing and rendering functionality.
+
+### Running Tests
+
+#### Using Composer
+```bash
+# Run all tests with coverage
 composer test:unit
+
+# Run specific test suites
+./vendor/bin/phpunit tests/MarkdownDocumentParserTest.php
+./vendor/bin/phpunit tests/HtmlDocumentRendererTest.php
 ```
 
-### Using Docker
-Run the following command:
-```
+#### Using Docker
+```bash
+# Run all tests in container
 docker run markdown-converter ./vendor/bin/phpunit tests
+
+# Run with coverage report
+docker run markdown-converter ./vendor/bin/phpunit tests --coverage-text
 ```
 
-## Usage
+### Test Structure
 
-To convert a Markdown file to HTML, use the following command:
+- `MarkdownDocumentParserTest.php`: Integration tests for parser
+- `MarkdownDocumentParserUnitTest.php`: Unit tests for parser internals
+- `HtmlDocumentRendererTest.php`: Tests for HTML rendering
+
+## Command Line Usage
+
+The package includes a fast and memory-efficient command line tool for converting Markdown files to HTML.
+
+### Using the CLI Tool
+
+Convert a Markdown file to HTML:
+```bash
+bin/markdown-converter input.md > output.html
 ```
+
+You can also use it with pipes:
+```bash
+cat input.md | bin/markdown-converter > output.html
+```
+Or process multiple files:
+```bash
+cat *.md | bin/markdown-converter > combined.html
+```
+
+### Composer Method
+
+Alternatively, you can use the Composer command:
+```bash
 composer convert-markdown readme.md 
 ```
 
-Replace `readme.md ` with the actual path to your Markdown file.
+Replace `readme.md` with the actual path to your Markdown file.
