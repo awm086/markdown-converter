@@ -13,15 +13,25 @@ class HtmlRenderer
                 case 'header':
                     $html .= "<h{$node['level']}>" . htmlspecialchars($node['content']) . "</h{$node['level']}>\n";
                     break;
-                case 'link':
-                    $html .= '<a href="' . htmlspecialchars($node['url']) . '">' . htmlspecialchars($node['text']) . "</a>\n";
-                    break;
                 case 'paragraph':
-                    $html .= "<p>" . htmlspecialchars($node['content']) . "</p>\n";
+                    $html .= "<p>" . $this->renderParagraphContent($node['content']) . "</p>\n";
                     break;
             }
         }
 
         return $html;
+    }
+
+    private function renderParagraphContent(array $content): string
+    {
+        $result = '';
+        foreach ($content as $item) {
+            if (is_string($item)) {
+                $result .= htmlspecialchars($item);
+            } elseif (is_array($item) && $item['type'] === 'link') {
+                $result .= '<a href="' . htmlspecialchars($item['url']) . '">' . htmlspecialchars($item['text']) . '</a>';
+            }
+        }
+        return $result;
     }
 }

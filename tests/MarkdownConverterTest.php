@@ -68,4 +68,12 @@ class MarkdownConverterTest extends TestCase
         $result = $this->converter->convertToHtml($markdown);
         $this->assertEquals($expected, $result);
     }
+
+    public function testConvertNestedMarkdown()
+    {
+        $markdown = "# Main Heading\n\nThis is a [link with [nested] content](http://example.com) in a paragraph.\n\n## Sub Heading\n\nAnother [simple link](http://example.org).";
+        $expected = "<h1>Main Heading</h1>\n<p>This is a <a href=\"http://example.com\">link with [nested] content</a> in a paragraph.</p>\n<h2>Sub Heading</h2>\n<p>Another <a href=\"http://example.org\">simple link</a>.</p>\n";
+        $result = $this->converter->convertToHtml($markdown);
+        $this->assertEquals($expected, $result);
+    }
 }
