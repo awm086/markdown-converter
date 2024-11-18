@@ -11,7 +11,7 @@ class MarkdownConverter
         $this->parser = new MarkdownParser();
     }
 
-    public function convertFile($composerEvent): void
+    static function convertFile($composerEvent): void
     {
         // Get the arguments passed to the script
         $arguments = $composerEvent->getArguments();
@@ -26,7 +26,8 @@ class MarkdownConverter
         }
 
         $content = file_get_contents($filePath);
-        $html = $this->convertToHtml($content);
+         $converter = new MarkdownConverter();
+        $html = $converter->convertToHtml($content);
 
         $outputPath = pathinfo($filePath, PATHINFO_DIRNAME) . '/' . pathinfo($filePath, PATHINFO_FILENAME) . '.html';
         file_put_contents($outputPath, $html);
