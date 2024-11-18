@@ -33,7 +33,7 @@ class MarkdownParser
                     }
                     break;
                 case 'TEXT':
-                    if ($currentNode && ($currentNode['type'] === 'header' || $currentNode['type'] === 'paragraph')) {
+                    if ($currentNode && (in_array($currentNode['type'], ['paragraph', 'header']))) {
                         if ($currentNode['type'] === 'header') {
                             $currentNode['content'] .= $token['content'];
                         } else {
