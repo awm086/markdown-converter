@@ -4,7 +4,16 @@ namespace App;
 
 class MarkdownConverter
 {
-    public static function convertFile($composerEvent): void
+    private $parser;
+    private $renderer;
+
+    public function __construct()
+    {
+        $this->parser = new MarkdownParser();
+        $this->renderer = new HtmlRenderer();
+    }
+
+    public function convertFile($composerEvent): void
     {
         // Get the arguments passed to the script
         $arguments = $composerEvent->getArguments();
@@ -19,7 +28,7 @@ class MarkdownConverter
         }
 
         $content = file_get_contents($filePath);
-        $html = self::convertToHtml($content);
+        $html = $this->convertToHtml($content);
         
         $outputPath = pathinfo($filePath, PATHINFO_DIRNAME) . '/' . pathinfo($filePath, PATHINFO_FILENAME) . '.html';
         file_put_contents($outputPath, $html);
@@ -27,34 +36,9 @@ class MarkdownConverter
         echo "Conversion complete. Output file: $outputPath\n";
     }
 
-    public static function convertToHtml(string $markdown): string
+    public function convertToHtml(string $markdown): string
     {
-        // Split the markdown content into an array of lines
-        $lines = explode("\n", $markdown);
-        $html = '';
-
-        // Process each line of markdown
-        foreach ($lines as $line) {
-            // Remove leading and trailing whitespace
-            $line = trim($line);
-            // Skip empty lines
-            if (empty($line)) continue;
-
-            // Check for headers (e.g., # Header, ## Subheader, etc.)
-            if (preg_match('/^(#{1,6})\s+(.+)$/', $line, $matches)) {
-                $level = strlen($matches[1]); // Determine header level (h1, h2, etc.)
-                $html .= "<h{$level}>" . htmlspecialchars($matches[2]) . "</h{$level}>\n";
-            } 
-            // Check for links [link text](URL)
-            elseif (preg_match('/^\[(.+?)\]\((.+?)\)$/', $line, $matches)) {
-                $html .= '<a href="' . htmlspecialchars($matches[2]) . '">' . htmlspecialchars($matches[1]) . "</a>\n";
-            } 
-            // If not a header or link, treat as a paragraph
-            else {
-                $html .= "<p>" . $line . "</p>\n";
-            }
-        }
-
-        return $html;
+        $ast = $this->parser->parse($markdown);
+        return $this->renderer->render($ast);
     }
 }

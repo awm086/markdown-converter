@@ -21,6 +21,9 @@
     "scripts": {
         "test:unit": "phpunit tests",
         "convert-markdown": "App\\MarkdownConverter::convertFile"
+    },
+    "config": {
+        "process-timeout": 0
     }
 }
     
