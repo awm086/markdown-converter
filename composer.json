@@ -19,7 +19,7 @@
         }
     },
     "scripts": {
-        "test:unit": "phpunit tests",
+        "test:unit": "phpunit tests --testdox",
         "convert-markdown": "App\\MarkdownConverter::convertFile"
     },
     "config": {
